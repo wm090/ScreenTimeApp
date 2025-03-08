@@ -22,7 +22,6 @@ const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
-    e.preventDefault();
 
     // Validate inputs
     if (!nickname.trim()) {

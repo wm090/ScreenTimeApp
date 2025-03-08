@@ -19,7 +19,6 @@ const LoginForm = ({ onSignIn, onForgotPassword }: LoginFormProps) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
-    e.preventDefault();
 
     if (!email.trim()) {
       setError("Please enter your email");
