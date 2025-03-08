@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Bell, Settings, Plus, Smartphone } from "lucide-react";
+import { Bell, Settings, Plus, Smartphone, LogOut, User } from "lucide-react";
 import { Button } from "../ui/button";
 import UsageSummary from "../dashboard/UsageSummary";
 import AppUsageList from "../dashboard/AppUsageList";
@@ -8,8 +8,10 @@ import AppConfigModal from "../modals/AppConfigModal";
 import AndroidNotification from "./AndroidNotification";
 import AndroidAppPermissions from "./AndroidAppPermissions";
 import AndroidAppSelector from "./AndroidAppSelector";
+import { useAuth } from "../auth/AuthProvider";
 
 const AndroidHome = () => {
+  const { nickname, signOut } = useAuth();
   const [isAppConfigModalOpen, setIsAppConfigModalOpen] = useState(false);
   const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(true);
   const [isAppSelectorOpen, setIsAppSelectorOpen] = useState(false);
@@ -102,12 +104,23 @@ const AndroidHome = () => {
             <Smartphone className="h-6 w-6 mr-2 text-blue-600" />
             <h1 className="text-xl font-bold">App Usage Monitor</h1>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center mr-2 bg-blue-50 px-3 py-1 rounded-full">
+              <User className="h-4 w-4 text-blue-600 mr-1" />
+              <span className="text-sm font-medium">{nickname}</span>
+            </div>
             <button className="p-2 rounded-full hover:bg-gray-100">
               <Bell className="h-5 w-5 text-gray-600" />
             </button>
             <button className="p-2 rounded-full hover:bg-gray-100">
               <Settings className="h-5 w-5 text-gray-600" />
+            </button>
+            <button
+              className="p-2 rounded-full hover:bg-gray-100 text-red-500"
+              onClick={signOut}
+              title="Sign Out"
+            >
+              <LogOut className="h-5 w-5" />
             </button>
           </div>
         </div>

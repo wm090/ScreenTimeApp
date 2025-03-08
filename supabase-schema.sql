@@ -1,5 +1,31 @@
 -- Supabase Schema for Android App Usage Monitor
 
+-- User Profiles Table - Stores user nicknames
+CREATE TABLE user_profiles (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  nickname TEXT NOT NULL,
+  avatar_url TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(user_id)
+);
+
+-- Add RLS policies for user_profiles
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own profile"
+  ON user_profiles FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own profile"
+  ON user_profiles FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own profile"
+  ON user_profiles FOR UPDATE
+  USING (auth.uid() = user_id);
+
 -- App Usage Table - Stores usage data for each app
 CREATE TABLE app_usage (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -80,20 +106,26 @@ CREATE POLICY "Users can update their own settings"
   USING (auth.uid() = user_id);
 
 -- Create indexes for performance
+CREATE INDEX user_profiles_user_id_idx ON user_profiles(user_id);
 CREATE INDEX app_usage_user_id_idx ON app_usage(user_id);
 CREATE INDEX app_usage_timestamp_idx ON app_usage(timestamp);
 CREATE INDEX app_config_user_id_idx ON app_config(user_id);
 
 -- Function to update the updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $
 BEGIN
     NEW.updated_at = NOW();
     RETURN NEW;
 END;
-$$ language 'plpgsql';
+$ language 'plpgsql';
 
 -- Add triggers to update the updated_at column
+CREATE TRIGGER update_user_profiles_updated_at
+BEFORE UPDATE ON user_profiles
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
 CREATE TRIGGER update_app_config_updated_at
 BEFORE UPDATE ON app_config
 FOR EACH ROW
