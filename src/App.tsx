@@ -2,8 +2,10 @@ import { Suspense, useState, useEffect } from "react";
 import { useRoutes, Routes, Route } from "react-router-dom";
 import Home from "./components/home";
 import routes from "tempo-routes";
-import NicknameAuth from "./components/auth/NicknameAuth";
+import AuthContainer from "./components/auth/AuthContainer";
 import { AuthProvider, useAuth } from "./components/auth/AuthProvider";
+import ConfirmEmail from "./pages/ConfirmEmail";
+import ResetPassword from "./pages/ResetPassword";
 
 function AppContent() {
   const { isAuthenticated, isLoading, signIn } = useAuth();
@@ -19,7 +21,7 @@ function AppContent() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <NicknameAuth onSignIn={signIn} />
+        <AuthContainer onSignIn={signIn} />
       </div>
     );
   }
@@ -29,6 +31,8 @@ function AppContent() {
       <>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/confirm-email" element={<ConfirmEmail />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
         {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
       </>

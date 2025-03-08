@@ -8,6 +8,7 @@ import AppConfigModal from "../modals/AppConfigModal";
 import AndroidNotification from "./AndroidNotification";
 import AndroidAppPermissions from "./AndroidAppPermissions";
 import AndroidAppSelector from "./AndroidAppSelector";
+import AndroidQuietHours from "./AndroidQuietHours";
 import { useAuth } from "../auth/AuthProvider";
 
 const AndroidHome = () => {
@@ -15,6 +16,7 @@ const AndroidHome = () => {
   const [isAppConfigModalOpen, setIsAppConfigModalOpen] = useState(false);
   const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(true);
   const [isAppSelectorOpen, setIsAppSelectorOpen] = useState(false);
+  const [isQuietHoursOpen, setIsQuietHoursOpen] = useState(false);
   const [permissionsGranted, setPermissionsGranted] = useState(false);
   const [selectedApp, setSelectedApp] = useState(null);
   const [showNotificationDemo, setShowNotificationDemo] = useState(false);
@@ -95,6 +97,15 @@ const AndroidHome = () => {
     setShowNotificationDemo(true);
   };
 
+  // Handle quiet hours settings
+  const handleQuietHoursSettings = (
+    enabled: boolean,
+    timeRange: { start: string; end: string },
+  ) => {
+    console.log("Quiet hours settings:", { enabled, timeRange });
+    setIsQuietHoursOpen(false);
+  };
+
   // Simple header component
   const AndroidHeader = () => {
     return (
@@ -112,7 +123,10 @@ const AndroidHome = () => {
             <button className="p-2 rounded-full hover:bg-gray-100">
               <Bell className="h-5 w-5 text-gray-600" />
             </button>
-            <button className="p-2 rounded-full hover:bg-gray-100">
+            <button
+              className="p-2 rounded-full hover:bg-gray-100"
+              onClick={() => setIsQuietHoursOpen(true)}
+            >
               <Settings className="h-5 w-5 text-gray-600" />
             </button>
             <button
@@ -155,6 +169,18 @@ const AndroidHome = () => {
             <AndroidAppSelector
               onSave={handleAppSelection}
               onCancel={() => setIsAppSelectorOpen(false)}
+            />
+          </div>
+        )}
+
+        {/* Quiet Hours Modal */}
+        {isQuietHoursOpen && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <AndroidQuietHours
+              enabled={false}
+              timeRange={{ start: "22:00", end: "07:00" }}
+              onSave={handleQuietHoursSettings}
+              onCancel={() => setIsQuietHoursOpen(false)}
             />
           </div>
         )}
